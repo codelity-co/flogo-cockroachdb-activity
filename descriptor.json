@@ -1,0 +1,66 @@
+{
+  "name": "flogo-cockroachdb-activity",
+  "type": "flogo:activity",
+  "version": "0.1.0",
+  "title": "Codelity Flogo CockroachDB Activity",
+  "description": "Codelity Flogo CockroachDB Activity",
+  "homepage": "https://github.com/codelity-co/flogo-cockroachdb-activity",
+  "settings": [
+    {
+      "name": "host",
+      "type": "string",
+      "required": true,
+      "description": "CockroachDB host/ip"
+    },
+    {
+      "name": "port",
+      "type": "integer",
+      "required": false
+    },
+    {
+      "name": "database",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "user",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "password",
+      "type": "string",
+      "format": "password",
+      "required": true
+    },
+    {
+      "name": "options",
+      "type": "object",
+      "required": false
+    },
+    {
+      "name": "dataMapping",
+      "type": "object",
+      "required": true
+    }
+  ],
+  "input": [
+    {
+      "name": "data",
+      "type": "object",
+      "required": true
+    }
+  ],
+  "output": [
+    {
+      "name": "status",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "result",
+      "type": "any",
+      "required": false
+    }
+  ]
+}
