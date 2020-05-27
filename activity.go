@@ -85,13 +85,8 @@ func (a *Activity) Eval(ctx activity.Context) (bool, error) {
 	if err != nil {
 		return true, err
 	}
+	data := input.Data.(map[string]interface{})
 
-	// Parse input data
-	var data map[string]interface{}
-	err = json.Unmarshal(input.Data.([]byte), &data)
-	if err != nil {
-		return true, err
-	}
 
 	// Prepare SQL Statement
 	var res map[string]interface{}
