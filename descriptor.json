@@ -1,7 +1,7 @@
 {
   "name": "flogo-cockroachdb-activity",
   "type": "flogo:activity",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "title": "Codelity Flogo CockroachDB Activity",
   "description": "Codelity Flogo CockroachDB Activity",
   "homepage": "https://github.com/codelity-co/flogo-cockroachdb-activity",
