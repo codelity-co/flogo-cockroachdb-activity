@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/project-flogo/core/data/metadata"
 	"github.com/project-flogo/core/activity"
 
 	jsonpath "github.com/oliveagle/jsonpath"
@@ -29,7 +30,8 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 
 	// Map settings
 	s := &Settings{}
-	err := s.FromMap(ctx.Settings())
+	// err := s.FromMap(ctx.Settings())
+	err := metadata.MapToStruct(ctx.Settings(), s, true)
 	if err != nil {
 		return nil, err
 	}
