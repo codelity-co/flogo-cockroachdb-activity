@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/project-flogo/core/data/metadata"
 	"github.com/project-flogo/core/activity"
 
+	"github.com/google/uuid"
 	jsonpath "github.com/oliveagle/jsonpath"
 	funk "github.com/thoas/go-funk"
-	"github.com/google/uuid"
 	"upper.io/db.v3/lib/sqlbuilder"
 	"upper.io/db.v3/postgresql"
 )
@@ -30,8 +29,7 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 
 	// Map settings
 	s := &Settings{}
-	// err := s.FromMap(ctx.Settings())
-	err := metadata.MapToStruct(ctx.Settings(), s, true)
+	err := s.FromMap(ctx.Settings())
 	if err != nil {
 		return nil, err
 	}
@@ -40,10 +38,10 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 	// Open db connection
 	dbSession, err = postgresql.Open(postgresql.ConnectionURL{
 		Database: s.Database,
-		Host: s.Host,
-		Options: s.Options,
+		Host:     s.Host,
+		Options:  s.Options,
 		Password: s.Password,
-		User: s.User,
+		User:     s.User,
 	})
 	if err != nil {
 		return nil, err
@@ -54,7 +52,7 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 	// Create activity
 	act := &Activity{
 		activitySettings: s,
-		dbSession: dbSession,
+		dbSession:        dbSession,
 	}
 	ctx.Logger().Debug("Finished New method of activity")
 
@@ -64,8 +62,7 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 // Activity struct
 type Activity struct {
 	activitySettings *Settings
-	dbSession				 sqlbuilder.Database
-
+	dbSession        sqlbuilder.Database
 }
 
 // Metadata method of Activity struct
@@ -87,7 +84,6 @@ func (a *Activity) Eval(ctx activity.Context) (bool, error) {
 		return true, err
 	}
 	data := input.Data.(map[string]interface{})
-
 
 	// Prepare SQL Statement
 	var res map[string]interface{}
@@ -111,7 +107,7 @@ func (a *Activity) Eval(ctx activity.Context) (bool, error) {
 			if err != nil {
 				return true, err
 			}
-			
+
 		case "DELETE":
 			res, err = a.deleteCollection(ctx, txn, collection, mapping, data)
 			if err != nil {
@@ -122,8 +118,8 @@ func (a *Activity) Eval(ctx activity.Context) (bool, error) {
 			if err != nil {
 				return true, err
 			}
-		default: 
-		  return true, fmt.Errorf("DB Method is not valid: %s", method)
+		default:
+			return true, fmt.Errorf("DB Method is not valid: %s", method)
 		}
 	}
 	err = txn.Commit()
@@ -172,7 +168,7 @@ func (a *Activity) insertCollection(ctx activity.Context, txn sqlbuilder.Tx, col
 	rowsAffected, _ := res.RowsAffected()
 	return map[string]interface{}{
 		"lastInsertedId": values[pos],
-		"rowsAffected": rowsAffected,
+		"rowsAffected":   rowsAffected,
 	}, nil
 }
 
@@ -202,7 +198,7 @@ func (a *Activity) updateCollection(ctx activity.Context, txn sqlbuilder.Tx, col
 		rowsAffected, _ := res.RowsAffected()
 		return map[string]interface{}{
 			"lastUpdatedId": values[pos],
-			"rowsAffected": rowsAffected,
+			"rowsAffected":  rowsAffected,
 		}, nil
 	}
 	return nil, fmt.Errorf("id field not found")
@@ -223,7 +219,7 @@ func (a *Activity) deleteCollection(ctx activity.Context, txn sqlbuilder.Tx, col
 		rowsAffected, _ := res.RowsAffected()
 		return map[string]interface{}{
 			"lastDeletedId": values[pos],
-			"rowsDeleted": rowsAffected,
+			"rowsDeleted":   rowsAffected,
 		}, nil
 	}
 	return nil, fmt.Errorf("id field not found")
@@ -255,7 +251,7 @@ func (a *Activity) mapDbFields(ctx activity.Context, mapping map[string]interfac
 			ctx.Logger().Debugf("jsonPath: %v, data: %v", v, data)
 			ctx.Logger().Warnf("Json path %v not found or invalid", v)
 		} else {
-			columns = append(columns, k)		
+			columns = append(columns, k)
 			values = append(values, value)
 		}
 	}
@@ -268,8 +264,6 @@ func (a *Activity) mapDbFields(ctx activity.Context, mapping map[string]interfac
 		uuidVar := uuid.New()
 		values = append(values, fmt.Sprintf("%v", uuidVar))
 	}
-	
+
 	return columns, values
 }
-
-
