@@ -11,7 +11,6 @@ type Settings struct {
 	Host string `md:"host"`
 	Options map[string]string `md:"options"`
 	Password string `md:"password"`
-	Port int `md:"port"`
 	User string `md:"user"`
 }
 

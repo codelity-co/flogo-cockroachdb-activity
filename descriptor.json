@@ -13,11 +13,6 @@
       "description": "CockroachDB host/ip"
     },
     {
-      "name": "port",
-      "type": "integer",
-      "required": false
-    },
-    {
       "name": "database",
       "type": "string",
       "required": true
