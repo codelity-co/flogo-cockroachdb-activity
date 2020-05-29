@@ -159,8 +159,7 @@ func (a *Activity) insertCollection(ctx activity.Context, txn sqlbuilder.Tx, col
 	if len(values) == 0 {
 		return nil, fmt.Errorf("Cannot map any value")
 	}
-	pos := -1
-	pos = funk.IndexOf(columns, "id")
+	pos := funk.IndexOf(columns, "id")
 	res, err := txn.InsertInto(collection).Columns(columns...).Values(values...).Exec()
 	if err != nil {
 		return nil, err
@@ -177,8 +176,7 @@ func (a *Activity) updateCollection(ctx activity.Context, txn sqlbuilder.Tx, col
 	if len(values) == 0 {
 		return nil, fmt.Errorf("Cannot map any value")
 	}
-	pos := -1
-	pos = funk.IndexOf(columns, "id")
+	pos := funk.IndexOf(columns, "id")
 	ctx.Logger().Debugf("columns: %v", columns)
 	ctx.Logger().Debugf("pos: %v", pos)
 	if pos >= 0 {
@@ -209,8 +207,7 @@ func (a *Activity) deleteCollection(ctx activity.Context, txn sqlbuilder.Tx, col
 	if len(values) == 0 {
 		return nil, fmt.Errorf("Cannot map any value")
 	}
-	pos := -1
-	pos = funk.IndexOf(columns, "id")
+	pos := funk.IndexOf(columns, "id")
 	if pos >= 0 {
 		res, err := txn.DeleteFrom(collection).Where("id = ?", values[pos]).Exec()
 		if err != nil {
@@ -230,8 +227,7 @@ func (a *Activity) upsertCollection(ctx activity.Context, txn sqlbuilder.Tx, col
 	if len(values) == 0 {
 		return nil, fmt.Errorf("Cannot map any value")
 	}
-	pos := -1
-	pos = funk.IndexOf(columns, "id")
+	pos := funk.IndexOf(columns, "id")
 	if pos >= 0 {
 		return a.updateCollection(ctx, txn, collection, mapping, data)
 	}
@@ -256,8 +252,7 @@ func (a *Activity) mapDbFields(ctx activity.Context, mapping map[string]interfac
 		}
 	}
 
-	pos := -1
-	pos = funk.IndexOf(columns, "id")
+	pos := funk.IndexOf(columns, "id")
 	ctx.Logger().Debugf("IndexOf(columns): %v", pos)
 	if pos == -1 {
 		columns = append(columns, "id")

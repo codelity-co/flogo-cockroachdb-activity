@@ -53,11 +53,6 @@ func (s *Settings) FromMap(values map[string]interface{}) error {
 		return err
 	}
 
-	s.Port, err = coerce.ToInt(values["port"])
-	if err != nil {
-		return err
-	}
-
 	s.User, err = coerce.ToString(values["user"])
 	if err != nil {
 		return err
@@ -74,7 +69,6 @@ func (s *Settings) ToMap() map[string]interface{} {
 		"database": s.Database,
 		"dataMapping": s.DataMapping,
 		"host": s.Host,
-		"port": s.Port,
 		"options": s.Options,
 		"password": s.Password,
 		"user": s.User,
