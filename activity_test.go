@@ -49,8 +49,7 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Settings() {
 	t := suite.T()
 
 	settings := &Settings{
-		Host: "localhost",
-		Port: 5432,
+		Host: "localhost:5432",
 		Database: "testdb",
 		User: "test",
 		Password: "test",
@@ -65,8 +64,7 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Insert() {
 	t := suite.T()
 	
 	settings := &Settings{
-		Host: "localhost",
-		Port: 5432,
+		Host: "localhost:5432",
 		Database: "testdb",
 		User: "test",
 		Password: "test",
@@ -99,8 +97,7 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Update() {
 	t := suite.T()
 	
 	settings := &Settings{
-		Host: "localhost",
-		Port: 5432,
+		Host: "localhost:5432",
 		Database: "testdb",
 		User: "test",
 		Password: "test",
@@ -130,8 +127,7 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Update() {
 	lastInsertedId := output["lastInsertedId"]
 
 	settings = &Settings{
-		Host: "localhost",
-		Port: 5432,
+		Host: "localhost:5432",
 		Database: "testdb",
 		User: "test",
 		Password: "test",
@@ -166,8 +162,7 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Delete() {
 	t := suite.T()
 	
 	settings := &Settings{
-		Host: "localhost",
-		Port: 5432,
+		Host: "localhost:5432",
 		Database: "testdb",
 		User: "test",
 		Password: "test",
@@ -197,8 +192,7 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Delete() {
 	lastInsertedId := output["lastInsertedId"]
 
 	settings = &Settings{
-		Host: "localhost",
-		Port: 5432,
+		Host: "localhost:5432",
 		Database: "testdb",
 		User: "test",
 		Password: "test",
