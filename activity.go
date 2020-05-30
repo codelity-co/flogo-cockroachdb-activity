@@ -27,9 +27,10 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 		dbSession sqlbuilder.Database
 	)
 
+	ctx.Logger().Debugf("ctx.Settings(): %v", ctx.Settings())
+
 	// Map settings
 	s := &Settings{}
-	ctx.Logger().Debugf("ctx.Settings(): %v", ctx.Settings())
 	err := s.FromMap(ctx.Settings())
 	if err != nil {
 		return nil, err
