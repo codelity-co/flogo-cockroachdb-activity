@@ -1,7 +1,6 @@
 package cockroachdb
 
 import (
-	"github.com/project-flogo/core/app/resolve"
 	"github.com/project-flogo/core/data/coerce"
 )
 
@@ -10,7 +9,7 @@ type Settings struct {
 	Database string `md:"database"`
 	DataMapping map[string]interface{} `md:"dataMapping"`
 	Host string `md:"host"`
-	Options map[string]string `md:"options"`
+	Options map[string]interface{} `md:"options"`
 	Password string `md:"password"`
 	User string `md:"user"`
 }
@@ -38,14 +37,9 @@ func (s *Settings) FromMap(values map[string]interface{}) error {
 	}
 
 	if values["options"] != nil {
-		s.Options = make(map[string]string)
-		for k, v := range values["options"].(map[string]interface{}) {
-			var option interface{}
-			option, err = s.MapValue(v)
-			if err != nil {
-				return err
-			}
-			s.Options[k] = option.(string)
+		s.Options, err = coerce.ToObject(values["options"])
+		if err != nil {
+			return err
 		}
 	}
 
@@ -63,46 +57,6 @@ func (s *Settings) FromMap(values map[string]interface{}) error {
 
 }
 
-// MapValue method of Setting is used to resolve env and properties in Settings
-func (s *Settings) MapValue(value interface{}) (interface{}, error) {
-	var (
-		err      error
-		anyValue interface{}
-	)
-
-	switch val := value.(type) {
-	case string:
-		if len(val) > 0 && val[0] == '=' {
-			anyValue, err = resolve.Resolve(val[1:], nil)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			anyValue, err = coerce.ToAny(val)
-			if err != nil {
-				return nil, err
-			}
-		}
-		
-	case map[string]interface{}:
-		dataMap := make(map[string]interface{})
-		for k, v := range val {
-			dataMap[k], err = s.MapValue(v)
-			if err != nil {
-				return nil, err
-			}
-		}
-		anyValue = dataMap
-
-	default:
-		anyValue, err = coerce.ToAny(val)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return anyValue, nil
-}
 
 // ToMap method of Settings
 func (s *Settings) ToMap() map[string]interface{} {
