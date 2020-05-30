@@ -73,6 +73,7 @@ func (a *Activity) Metadata() *activity.Metadata {
 // Eval method of Activity struct
 func (a *Activity) Eval(ctx activity.Context) (bool, error) {
 
+
 	var err error
 	logger := ctx.Logger()
 
