@@ -29,6 +29,7 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 
 	// Map settings
 	s := &Settings{}
+	ctx.Logger().Debugf("ctx.Settings(): %v", ctx.Settings())
 	err := s.FromMap(ctx.Settings())
 	if err != nil {
 		return nil, err
@@ -72,7 +73,6 @@ func (a *Activity) Metadata() *activity.Metadata {
 
 // Eval method of Activity struct
 func (a *Activity) Eval(ctx activity.Context) (bool, error) {
-
 
 	var err error
 	logger := ctx.Logger()
