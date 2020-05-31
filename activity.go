@@ -6,9 +6,6 @@ import (
 	"strings"
 
 	"github.com/project-flogo/core/activity"
-	"github.com/project-flogo/core/data/mapper"
-	"github.com/project-flogo/core/data/property"
-	"github.com/project-flogo/core/data/resolve"
 
 	"github.com/google/uuid"
 	jsonpath "github.com/oliveagle/jsonpath"
@@ -18,12 +15,6 @@ import (
 )
 
 var activityMd = activity.ToMetadata(&Settings{}, &Input{}, &Output{})
-var resolver = resolve.NewCompositeResolver(map[string]resolve.Resolver{
-	".":        &resolve.ScopeResolver{},
-	"env":      &resolve.EnvResolver{},
-	"property": &property.Resolver{},
-	"loop":     &resolve.LoopResolver{},
-})
 
 func init() {
 	_ = activity.Register(&Activity{}, New)
@@ -42,21 +33,6 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	mapperFactory := mapper.NewFactory(resolver)
-	var optionsMapper mapper.Mapper
-	optionsMapper, err = mapperFactory.NewMapper(s.Options)
-  if err != nil {
-		return nil, err
-	}
-
-	var optionsValue map[string]interface{}
-	optionsValue, err = optionsMapper.Apply(nil)
-	if err != nil {
-		return nil, err
-	}
-	
-	s.Options = optionsValue
 	ctx.Logger().Debugf("Settings: %v", s)
 
 	// Open db connection
