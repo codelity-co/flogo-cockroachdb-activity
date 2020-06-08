@@ -89,7 +89,7 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Insert() {
 	assert.Nil(t, err)
 
 	output := tc.GetOutput("result").(map[string]interface{})
-	assert.NotNil(t, output["lastInsertedId"])
+	assert.NotNil(t, output["lastInsertedID"])
 	assert.Equal(t, int64(1), output["rowsAffected"])
 }
 
@@ -122,9 +122,9 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Update() {
 	assert.Nil(t, err)
 
 	output := tc.GetOutput("result").(map[string]interface{})
-	assert.NotNil(t, output["lastInsertedId"])
+	assert.NotNil(t, output["lastInsertedID"])
 	assert.Equal(t, int64(1), output["rowsAffected"])
-	lastInsertedId := output["lastInsertedId"]
+	lastInsertedID := output["lastInsertedID"]
 
 	settings = &Settings{
 		Host: "localhost:5432",
@@ -147,13 +147,13 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Update() {
 	assert.Nil(t, err)
 
 	tc = test.NewActivityContext(act.Metadata())
-	dataString := fmt.Sprintf("{\"id\": \"%v\", \"dummy\": \"abc\"}", lastInsertedId)
+	dataString := fmt.Sprintf("{\"id\": \"%v\", \"dummy\": \"abc\"}", lastInsertedID)
 	tc.SetInput("data", []byte(dataString))
 	_, err = act.Eval(tc) 
 	assert.Nil(t, err)
 
 	output = tc.GetOutput("result").(map[string]interface{})
-	assert.Equal(t, lastInsertedId, output["lastUpdatedId"])
+	assert.Equal(t, lastInsertedID, output["lastUpdatedID"])
 	assert.Equal(t, int64(1), output["rowsAffected"])
 
 }
@@ -187,9 +187,9 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Delete() {
 	assert.Nil(t, err)
 
 	output := tc.GetOutput("result").(map[string]interface{})
-	assert.NotNil(t, output["lastInsertedId"])
+	assert.NotNil(t, output["lastInsertedID"])
 	assert.Equal(t, int64(1), output["rowsAffected"])
-	lastInsertedId := output["lastInsertedId"]
+	lastInsertedID := output["lastInsertedID"]
 
 	settings = &Settings{
 		Host: "localhost:5432",
@@ -212,13 +212,13 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Delete() {
 	assert.Nil(t, err)
 
 	tc = test.NewActivityContext(act.Metadata())
-	dataString := fmt.Sprintf("{\"id\": \"%v\", \"dummy\": \"abc\"}", lastInsertedId)
+	dataString := fmt.Sprintf("{\"id\": \"%v\", \"dummy\": \"abc\"}", lastInsertedID)
 	tc.SetInput("data", []byte(dataString))
 	_, err = act.Eval(tc) 
 	assert.Nil(t, err)
 
 	output = tc.GetOutput("result").(map[string]interface{})
-	assert.Equal(t, lastInsertedId, output["lastDeletedId"])
+	assert.Equal(t, lastInsertedID, output["lastDeletedID"])
 	assert.Equal(t, int64(1), output["rowsDeleted"])
 
 }

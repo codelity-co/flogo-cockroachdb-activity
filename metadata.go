@@ -1,6 +1,7 @@
 package cockroachdb
 
 import (
+	"fmt"
 	"github.com/project-flogo/core/data/coerce"
 	"github.com/project-flogo/core/data/mapper"
 	"github.com/project-flogo/core/data/property"
@@ -14,15 +15,28 @@ var resolver = resolve.NewCompositeResolver(map[string]resolve.Resolver{
 	"loop":     &resolve.LoopResolver{},
 })
 
-// Settings struct of Actvity
-type Settings struct {
-	Database string `md:"database"`
-	DataMapping map[string]interface{} `md:"dataMapping"`
-	Host string `md:"host"`
-	Options map[string]interface{} `md:"options"`
-	Password string `md:"password"`
-	User string `md:"user"`
-}
+type (
+	// Settings struct of Actvity
+	Settings struct {
+		Database string `md:"database"`
+		DataMapping map[string]interface{} `md:"dataMapping"`
+		Host string `md:"host"`
+		Options map[string]interface{} `md:"options"`
+		Password string `md:"password"`
+		User string `md:"user"`
+	}
+
+	// Input struct of Activity
+	Input struct {
+		Data interface{} `md:"data,required"`
+	}
+
+	// Output struct of Activity
+	Output struct {
+		Status string `md:"status"`
+		Result interface{} `md:"result"`
+	}
+)
 
 // FromMap method of Settings
 func (s *Settings) FromMap(values map[string]interface{}) error {
@@ -46,12 +60,16 @@ func (s *Settings) FromMap(values map[string]interface{}) error {
 		return err
 	}
 
-	if values["options"] != nil {
+	s.Options, err = coerce.ToObject(values["options"])
+	if err != nil {
+		return err
+	}
+
+	if (s.Options != nil) {
+
+		fmt.Println(fmt.Sprintf("s.Options: %v", s.Options))
+
 		var options map[string]interface{}
-		options, err = coerce.ToObject(values["options"])
-		if err != nil {
-			return err
-		}
 
 		mapperFactory := mapper.NewFactory(resolver)
 		var optionsMapper mapper.Mapper
@@ -83,7 +101,6 @@ func (s *Settings) FromMap(values map[string]interface{}) error {
 
 }
 
-
 // ToMap method of Settings
 func (s *Settings) ToMap() map[string]interface{} {
 
@@ -98,16 +115,11 @@ func (s *Settings) ToMap() map[string]interface{} {
 
 }
 
-// Input struct of Activity
-type Input struct {
-	Data interface{} `md:"data,required"`
-}
-
 // FromMap method of Input
 func (i *Input) FromMap(values map[string]interface{}) error {
 	var err error
 
-	i.Data, err = coerce.ToAny(values["data"])
+	i.Data, err = coerce.ToObject(values["data"])
 	if err != nil {
 		return err
 	}
@@ -120,12 +132,6 @@ func (i *Input) ToMap() map[string]interface{} {
 	return map[string]interface{}{
 		"data": i.Data,
 	}
-}
-
-// Output struct of Activity
-type Output struct {
-	Status string `md:"status"`
-	Result interface{} `md:"result"`
 }
 
 // FromMap method of Output

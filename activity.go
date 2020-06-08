@@ -92,6 +92,9 @@ func (a *Activity) Eval(ctx activity.Context) (bool, error) {
 	if err != nil {
 		return true, err
 	}
+
+	output := &Output{}
+
 	for k, v := range a.activitySettings.DataMapping {
 		collection := k
 		method := strings.ToUpper(v.(map[string]interface{})["method"].(string))
@@ -100,46 +103,65 @@ func (a *Activity) Eval(ctx activity.Context) (bool, error) {
 		case "INSERT":
 			res, err = a.insertCollection(ctx, txn, collection, mapping, data)
 			if err != nil {
+				_ = txn.Rollback()
+				output.Status = "ERROR"
+				output.Result = err
+				ctx.Logger().Debugf("Output: %v", output)
+				_ = ctx.SetOutputObject(output)
 				return true, err
 			}
 		case "UPDATE":
 			res, err = a.updateCollection(ctx, txn, collection, mapping, data)
 			if err != nil {
+				_ = txn.Rollback()
+				output.Status = "ERROR"
+				output.Result = err
+				ctx.Logger().Debugf("Output: %v", output)
+				_ = ctx.SetOutputObject(output)
 				return true, err
 			}
 
 		case "DELETE":
 			res, err = a.deleteCollection(ctx, txn, collection, mapping, data)
 			if err != nil {
+				_ = txn.Rollback()
+				output.Status = "ERROR"
+				output.Result = err
+				ctx.Logger().Debugf("Output: %v", output)
+				_ = ctx.SetOutputObject(output)
 				return true, err
 			}
 		case "UPSERT":
 			res, err = a.upsertCollection(ctx, txn, collection, mapping, data)
 			if err != nil {
+				_ = txn.Rollback()
+				output.Status = "ERROR"
+				output.Result = err
+				ctx.Logger().Debugf("Output: %v", output)
+				_ = ctx.SetOutputObject(output)
 				return true, err
 			}
 		default:
+			_ = txn.Rollback()
+			output.Status = "ERROR"
+			output.Result = err
+			_ = ctx.SetOutputObject(output)
 			return true, fmt.Errorf("DB Method is not valid: %s", method)
 		}
 	}
 	err = txn.Commit()
 	if err != nil {
 		_ = txn.Rollback()
+		output.Status = "ERROR"
+		output.Result = err
+		_ = ctx.SetOutputObject(output)
 		return true, err
 	}
 
 	// Output result
-	output := &Output{}
-	if err != nil {
-		output.Status = "ERROR"
-		output.Result = err
-	} else {
-		output.Status = "SUCCESS"
-		output.Result = res
-	}
-
+	output.Status = "SUCCESS"
+	output.Result = res
 	ctx.Logger().Debugf("Output: %v", output)
-
 	err = ctx.SetOutputObject(output)
 	if err != nil {
 		return true, err
@@ -166,7 +188,7 @@ func (a *Activity) insertCollection(ctx activity.Context, txn sqlbuilder.Tx, col
 	}
 	rowsAffected, _ := res.RowsAffected()
 	return map[string]interface{}{
-		"lastInsertedId": values[pos],
+		"lastInsertedID": values[pos],
 		"rowsAffected":   rowsAffected,
 	}, nil
 }
@@ -195,7 +217,7 @@ func (a *Activity) updateCollection(ctx activity.Context, txn sqlbuilder.Tx, col
 		}
 		rowsAffected, _ := res.RowsAffected()
 		return map[string]interface{}{
-			"lastUpdatedId": values[pos],
+			"lastUpdatedID": values[pos],
 			"rowsAffected":  rowsAffected,
 		}, nil
 	}
@@ -215,7 +237,7 @@ func (a *Activity) deleteCollection(ctx activity.Context, txn sqlbuilder.Tx, col
 		}
 		rowsAffected, _ := res.RowsAffected()
 		return map[string]interface{}{
-			"lastDeletedId": values[pos],
+			"lastDeletedID": values[pos],
 			"rowsDeleted":   rowsAffected,
 		}, nil
 	}
