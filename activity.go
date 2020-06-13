@@ -288,7 +288,10 @@ func (a *Activity) mapDbFields(ctx activity.Context, mapping map[string]interfac
 func mapOptionsToString(sOptions map[string]interface{}) map[string]string {
 	options := make(map[string]string)
 	for k, v := range sOptions {
-		options[k] = v.(string)
+		value := v.(string)
+		if len(value) > 0 {
+			options[k] = v.(string)
+		}
 	}
 	return options
 }
