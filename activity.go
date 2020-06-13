@@ -6,6 +6,10 @@ import (
 	"strings"
 
 	"github.com/project-flogo/core/activity"
+	"github.com/project-flogo/core/data"
+	"github.com/project-flogo/core/data/mapper"
+	"github.com/project-flogo/core/data/property"
+	"github.com/project-flogo/core/data/resolve"
 
 	"github.com/google/uuid"
 	jsonpath "github.com/oliveagle/jsonpath"
@@ -15,6 +19,12 @@ import (
 )
 
 var activityMd = activity.ToMetadata(&Settings{}, &Input{}, &Output{})
+var resolver = resolve.NewCompositeResolver(map[string]resolve.Resolver{
+	".":        &resolve.ScopeResolver{},
+	"env":      &resolve.EnvResolver{},
+	"property": &property.Resolver{},
+	"loop":     &resolve.LoopResolver{},
+})
 
 func init() {
 	_ = activity.Register(&Activity{}, New)
@@ -34,6 +44,15 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 		return nil, err
 	}
 	ctx.Logger().Debugf("Settings: %v", s)
+
+	// Resolving settings
+	ctx.Logger().Debugf("Opitons settings being resolved: %v", s.Options)
+	options, err := resolveObject(s.Options)
+	if err != nil {
+		return nil, err
+	}
+	s.Options = options
+	ctx.Logger().Debugf("Opitons settings resolved: %v", s.Options)
 
 	// Open db connection
 	dbSession, err = postgresql.Open(postgresql.ConnectionURL{
@@ -294,4 +313,21 @@ func mapOptionsToString(sOptions map[string]interface{}) map[string]string {
 		}
 	}
 	return options
+}
+
+func resolveObject(object map[string]interface{}) (map[string]interface{}, error) {
+	var err error 
+
+	mapperFactory := mapper.NewFactory(resolver)
+	valuesMapper, err := mapperFactory.NewMapper(object)
+	if err != nil {
+		return nil, err
+	}
+
+	objectValues, err := valuesMapper.Apply(data.NewSimpleScope(map[string]interface{}{}, nil))
+	if err != nil {
+		return nil, err
+	}
+
+	return objectValues, nil
 }

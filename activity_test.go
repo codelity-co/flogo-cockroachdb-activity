@@ -53,6 +53,9 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Settings() {
 		Database: "testdb",
 		User: "test",
 		Password: "test",
+		Options: map[string]interface{}{
+			"sslmode": "disable",
+		},
 	}
 
 	iCtx := test.NewActivityInitContext(settings, nil)
@@ -68,6 +71,9 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Insert() {
 		Database: "testdb",
 		User: "test",
 		Password: "test",
+		Options: map[string]interface{}{
+			"sslmode": `disable`,
+		},
 		DataMapping: map[string]interface{}{
 			"testtable": map[string]interface{}{
 				"method": "INSERT",
@@ -101,6 +107,9 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Update() {
 		Database: "testdb",
 		User: "test",
 		Password: "test",
+		Options: map[string]interface{}{
+			"sslmode": "disable",
+		},
 		DataMapping: map[string]interface{}{
 			"testtable": map[string]interface{}{
 				"method": "INSERT",
@@ -131,6 +140,9 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Update() {
 		Database: "testdb",
 		User: "test",
 		Password: "test",
+		Options: map[string]interface{}{
+			"sslmode": "disable",
+		},
 		DataMapping: map[string]interface{}{
 			"testtable": map[string]interface{}{
 				"method": "UPDATE",
@@ -166,6 +178,9 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Delete() {
 		Database: "testdb",
 		User: "test",
 		Password: "test",
+		Options: map[string]interface{}{
+			"sslmode": "disable",
+		},
 		DataMapping: map[string]interface{}{
 			"testtable": map[string]interface{}{
 				"method": "INSERT",
@@ -196,6 +211,9 @@ func (suite *CockroachdbActivityTestSuite) TestCockroachdbActivity_Delete() {
 		Database: "testdb",
 		User: "test",
 		Password: "test",
+		Options: map[string]interface{}{
+			"sslmode": "disable",
+		},
 		DataMapping: map[string]interface{}{
 			"testtable": map[string]interface{}{
 				"method": "DELETE",

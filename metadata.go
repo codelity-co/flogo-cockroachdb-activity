@@ -1,21 +1,8 @@
 package cockroachdb
 
 import (
-	"fmt"
-
-	"github.com/project-flogo/core/data"
 	"github.com/project-flogo/core/data/coerce"
-	"github.com/project-flogo/core/data/mapper"
-	"github.com/project-flogo/core/data/property"
-	"github.com/project-flogo/core/data/resolve"
 )
-
-var resolver = resolve.NewCompositeResolver(map[string]resolve.Resolver{
-	".":        &resolve.ScopeResolver{},
-	"env":      &resolve.EnvResolver{},
-	"property": &property.Resolver{},
-	"loop":     &resolve.LoopResolver{},
-})
 
 type (
 	// Settings struct of Actvity
@@ -65,28 +52,6 @@ func (s *Settings) FromMap(values map[string]interface{}) error {
 	s.Options, err = coerce.ToObject(values["options"])
 	if err != nil {
 		return err
-	}
-
-	if s.Options != nil {
-
-		fmt.Println(fmt.Sprintf("s.Options: %v", s.Options))
-
-		var options map[string]interface{}
-
-		mapperFactory := mapper.NewFactory(resolver)
-		var optionsMapper mapper.Mapper
-		optionsMapper, err = mapperFactory.NewMapper(options)
-		if err != nil {
-			return err
-		}
-
-		var optionsValue map[string]interface{}
-		optionsValue, err = optionsMapper.Apply(data.NewSimpleScope(map[string]interface{}{}, nil))
-		if err != nil {
-			return err
-		}
-
-		s.Options = optionsValue
 	}
 
 	s.Password, err = coerce.ToString(values["password"])
