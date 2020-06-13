@@ -3,7 +3,6 @@ package cockroachdb
 import (
 	"fmt"
 
-	"github.com/project-flogo/core/data"
 	"github.com/project-flogo/core/data/coerce"
 	"github.com/project-flogo/core/data/mapper"
 	"github.com/project-flogo/core/data/property"
@@ -81,7 +80,7 @@ func (s *Settings) FromMap(values map[string]interface{}) error {
 		}
 
 		var optionsValue map[string]interface{}
-		optionsValue, err = optionsMapper.Apply(&data.SimpleScope{})
+		optionsValue, err = optionsMapper.Apply(nil)
 		if err != nil {
 			return err
 		}
